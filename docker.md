@@ -23,7 +23,7 @@ docker image prune
 
 docker-compose build
 
-# хапустить и отключиться
+# запустить и отключиться
 docker-compose up -d 
 
 # подключиться к потоку логов
