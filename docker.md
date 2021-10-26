@@ -16,6 +16,8 @@ docker run --name openvpn --cap-add=NET_ADMIN -it -p 1194:1194/udp -p 80:8080/tc
 docker exec -it <containerid> /bin/bash #
 docker exec -it strava_django_web_1 /bin/bash #
 docker exec -it strava_django_web_1 /bin/sh # if alpine
+docker exec -it strava_django_web_1 --user root /bin/bash
+
 
 #удалить ненужные образы и слои
 docker image prune
