@@ -1,6 +1,7 @@
 ```sh
 docker ps -a # список контейнеров, в том числе и отработавших
 docker rm $(docker ps -a | grep strava_django_web_1 | awk '{print $1}') # удалить все контейнеры по имени
+docker ps -a | grep Exit | cut -d ' ' -f 1 | xargs sudo docker rm #удалить отработавшие контейнеры
 
 docker run --name squid -d --restart=always --publish 3128:3128 --volume ./squid.conf:/etc/squid/squid.conf sameersbn/squid:3.5.27-2 # быстропроксик
 #сначала без волума стянуть конфиг если нужно что то править 
@@ -16,18 +17,25 @@ docker exec -it <containerid> /bin/bash #
 docker exec -it strava_django_web_1 /bin/bash #
 docker exec -it strava_django_web_1 /bin/sh # if alpine
 
-docker-compose build
-docker-compose up -d
-docker-compose down
+#удалить ненужные образы и слои
+docker image prune
 
-docker-compose logs --follow # подключиться к потоку логов
-tail -100f $(docker inspect --format='{{.LogPath}}' <container_name_or_id>) # другой вариант
+
+docker-compose build
+
+# хапустить и отключиться
+docker-compose up -d 
+
+# подключиться к потоку логов
+docker-compose logs --follow 
+# другой вариант
+tail -100f $(docker inspect --format='{{.LogPath}}' <container_name_or_id>) 
 
 #очистка логов
 truncate -s 0 $(docker inspect --format='{{.LogPath}}' <container_name_or_id>)
 truncate -s 0 /var/lib/docker/containers/*/*-json.log
 
-
+docker-compose down
 
 docker-compose exec strava_django_web_1 python manage.py makemigrations
 docker-compose exec strava_django_web_1 python manage.py migrate
