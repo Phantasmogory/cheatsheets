@@ -6,6 +6,9 @@ docker ps -a | grep Exit | cut -d ' ' -f 1 | xargs sudo docker rm #удалит�
 #удалить ненужные образы и слои
 docker image prune
 
+
+-p 8080:80 # Map TCP port 80 in the container to port 8080 on the Docker host
+
 # быстропроксик
 docker run --name squid -d --restart=always --publish 3128:3128 --volume ./squid.conf:/etc/squid/squid.conf sameersbn/squid:3.5.27-2 
 #сначала без волума стянуть конфиг если нужно что то править 
@@ -13,7 +16,7 @@ docker cp squid:/etc/squid/squid.conf squid.conf
 docker exec -it squid tail -f /var/log/squid/access.log
 
 # быстровпн
-docker run --name openvpn --cap-add=NET_ADMIN -it -p 1194:1194/udp -p 80:8080/tcp -e HOST_ADDR=$(curl -s https://api.ipify.org) alekslitvinenk/openvpn 
+docker run --name openvpn --cap-add=NET_ADMIN -it -p 1194:1194/udp -p 8081:8080/tcp -e HOST_ADDR=$(curl -s https://api.ipify.org) alekslitvinenk/openvpn 
 
 #зайти внутрь контейнера
 docker exec -it <containerid> /bin/bash #
